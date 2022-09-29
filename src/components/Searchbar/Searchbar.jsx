@@ -1,16 +1,24 @@
 import React, { Component } from 'react';
+import { ImSearch } from 'react-icons/im';
+import { toast } from 'react-toastify';
 
 export default class Searchbar extends Component {
   state = { query: '' };
 
   handleSubmit = event => {
     event.preventDefault();
+
+    if (this.state.query.trim() === '') {
+      // alert('Please, enter category');
+      return toast.warn('Please, enter category');
+    }
+
     this.props.onSubmit(this.state.query);
     this.setState({ query: '' });
   };
 
   handleChanges = event => {
-    this.setState({ query: event.target.value });
+    this.setState({ query: event.currentTarget.value.toLowerCase() });
   };
 
   render() {
@@ -18,7 +26,9 @@ export default class Searchbar extends Component {
       <header className="searchbar">
         <form className="form" onSubmit={this.handleSubmit}>
           <button type="submit" className="button">
-            <span className="button-label">Search</span>
+            <ImSearch style={{ marginRight: 8 }} />
+            Search
+            {/* <span className="button-label">Search</span> */}
           </button>
 
           <input
