@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { ImSearch } from 'react-icons/im';
 import { FaSearch } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 
