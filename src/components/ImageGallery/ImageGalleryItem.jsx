@@ -1,7 +1,17 @@
-export default function ImageGalleryItem({ smallImg, bigImg, alt }) {
+export default function ImageGalleryItem({
+  smallImg,
+  alt,
+  bigImg,
+  onImgClick,
+}) {
   return (
     <li className="ImageGalleryItem">
-      <img src={smallImg} alt={alt} className="ImageGalleryItem-image" />
+      <img
+        src={smallImg}
+        alt={alt}
+        className="ImageGalleryItem-image"
+        onClick={() => onImgClick(bigImg, alt)}
+      />
     </li>
   );
 }
