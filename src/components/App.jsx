@@ -6,7 +6,7 @@ import ImageGallery from './ImageGallery/ImageGallery';
 // import axios from 'axios';
 import { Button } from './Button/Button';
 import imgAPI from 'api/api';
-
+import { Loader } from './Loader/Loader';
 // axios.defaults.baseURL = 'https://pixabay.com/api';
 
 export class App extends Component {
@@ -79,7 +79,7 @@ export class App extends Component {
     return (
       <>
         <Searchbar onSubmit={this.getInputSubmit} />
-        {loading && <h1>spiner</h1>}
+        {loading && <Loader />}
         <ImageGallery searchQuery={searchQuery} page={page} images={images} />
         {images.length !== 0 && images.length < totalImgs && (
           <Button onLoadMoreClick={this.handleLoadMoreBtn} />
