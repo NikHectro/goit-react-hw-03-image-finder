@@ -1,38 +1,87 @@
 import React, { Component } from 'react';
+import ImageGalleryItem from './ImageGalleryItem';
+import imgAPI from 'api/api';
 
 // function ImageGallery(searchQuery) {
 export default class ImageGallery extends Component {
   state = {
-    images: null,
-    loading: false,
+    images: [],
+    // loading: false,
+    error: null,
+    status: 'idle',
   };
   componentDidUpdate(prevProps, prevState) {
-    if (prevProps.searchQuery !== this.props.searchQuery) {
-      console.log('search request has changed');
+    const request = this.props.searchQuery;
+    const page = this.props.page;
+    console.log('page', page);
 
-      this.setState({ loading: true });
-      fetch(
-        `https://pixabay.com/api/?q=${this.props.searchQuery}&page=1&key=29344544-28f8077a689a3611398a04467&image_type=photo&orientation=horizontal&per_page=12`
-      )
-        .then(res => res.json())
-        .then(images => this.setState({ images }))
-        .finally(() => this.setState({ loading: false }));
+    if (prevProps.searchQuery !== request || prevProps.page !== page) {
+      this.setState({
+        // loading: true, images: null,
+        status: 'pending',
+      });
+      imgAPI
+        .fetchImages(request, page)
+        .then(data => {
+          if (!data.hits.length) {
+            this.setState({
+              error: `Nothing to show for "${request}"`,
+              status: 'rejected',
+            });
+          } else {
+            this.setState({
+              images: [...this.state.images, ...data.hits],
+              status: 'resolved',
+            });
+          }
+        })
+        .catch(error => this.setState({ error, status: 'rejected' }));
+      // .finally(() => this.setState({ loading: false }));
     }
   }
   render() {
-    const { images, loading } = this.state;
-    const { searchQuery } = this.props;
+    const { images, loading, error, status } = this.state;
+    // const { searchQuery } = this.props;
 
-    return (
-      <ul className="gallery">
-        <li>
-          <p>{this.props.searchQuery}</p>
-          {loading && <div>Loading...</div>}
-          {!searchQuery && <p>Enter your request</p>}
-          {images && <img src={images.hits[0].webformatURL} alt="" />}
-        </li>
-      </ul>
-    );
+    if (status === 'idle') {
+      return <p>Enter your request to find some photos!</p>;
+    }
+
+    if (status === 'pending') {
+      return <div>Loading...</div>;
+    }
+
+    if (status === 'rejected') {
+      return <h1>{error.message || error}</h1>;
+    }
+
+    if (status === 'resolved') {
+      return (
+        <ul className="ImageGallery">
+          {images.map(({ id, largeImageURL, webformatURL, tags }) => (
+            <ImageGalleryItem
+              key={id}
+              smallImg={webformatURL}
+              bigImg={largeImageURL}
+              alt={tags}
+            />
+          ))}
+        </ul>
+        // <img src={images.hits[0].webformatURL} alt="" />
+      );
+    }
+
+    // return (
+    //   <ul className="gallery">
+    //     <li>
+    //       <p>{this.props.searchQuery}</p>
+    //       {error && <h1>{error.message}</h1>}
+    //       {loading && <div>Loading...</div>}
+    //       {!searchQuery && <p>Enter your request</p>}
+    //       {images && <img src={images.hits[0].webformatURL} alt="" />}
+    //     </li>
+    //   </ul>
+    // );
   }
 }
 

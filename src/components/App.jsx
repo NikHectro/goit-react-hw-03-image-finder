@@ -4,14 +4,16 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ImageGallery from './ImageGallery/ImageGallery';
 import axios from 'axios';
+import { Button } from './Button/Button';
 
 axios.defaults.baseURL = 'https://pixabay.com/api';
 
 export class App extends Component {
   state = {
     searchQuery: '',
-    images: null,
-    loading: false,
+    page: 1,
+    // images: null,
+    // loading: false,
   };
 
   // componentDidMount() {
@@ -25,20 +27,33 @@ export class App extends Component {
   // }
 
   getInputSubmit = query => {
-    this.setState({ searchQuery: query });
+    this.setState({ searchQuery: query, page: 1 });
+  };
+
+  handleLoadMoreBtn = () => {
+    this.setState(prevStage => ({ page: prevStage.page + 1 }));
+    // ({ page }) => ({ page: page + 1 })
   };
 
   render() {
+    const loading = this.state.loading;
     return (
       <>
         <Searchbar onSubmit={this.getInputSubmit} />
-        {this.state.loading && <h1>spiner</h1>}
-        {this.state.images && (
+        {loading && <h1>spiner</h1>}
+        {/* {this.state.images && (
           <div>{this.state.images.hits[0].userImageURL}</div>
-        )}
+        )} */}
         {/* {this.state.images.hits} */}
+
+        <ImageGallery
+          searchQuery={this.state.searchQuery}
+          page={this.state.page}
+        />
+        {/* {this.props.images.length !== 0 && !loading && ( */}
+        <Button onLoadMoreClick={this.handleLoadMoreBtn} />
+        {/* )} */}
         <ToastContainer />
-        <ImageGallery searchQuery={this.state.searchQuery} />
       </>
     );
   }

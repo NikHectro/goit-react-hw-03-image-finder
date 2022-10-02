@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { ImSearch } from 'react-icons/im';
+import { FaSearch } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 
 export default class Searchbar extends Component {
@@ -15,6 +16,7 @@ export default class Searchbar extends Component {
 
     this.props.onSubmit(this.state.query);
     this.setState({ query: '' });
+    event.target.reset();
   };
 
   handleChanges = event => {
@@ -23,16 +25,15 @@ export default class Searchbar extends Component {
 
   render() {
     return (
-      <header className="searchbar">
-        <form className="form" onSubmit={this.handleSubmit}>
-          <button type="submit" className="button">
-            <ImSearch style={{ marginRight: 8 }} />
-            Search
+      <header className="Searchbar">
+        <form className="SearchForm" onSubmit={this.handleSubmit}>
+          <button type="submit" className="SearchForm-button">
+            <FaSearch />
             {/* <span className="button-label">Search</span> */}
           </button>
 
           <input
-            className="input"
+            className="SearchForm-input"
             value={this.state.query}
             onChange={this.handleChanges}
             type="text"
